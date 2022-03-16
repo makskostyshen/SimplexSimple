@@ -1,7 +1,10 @@
-import LinearProgrammingProblem.Constraint;
+package CalculatingTable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import LinearProgrammingProblem.Constraint;
+
 
 public class Row {
     private List<Double> components;

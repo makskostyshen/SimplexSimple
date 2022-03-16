@@ -1,6 +1,10 @@
-import LinearProgrammingProblem.Problem;
+package Methods;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import CalculatingTable.Tableau;
+import LinearProgrammingProblem.Problem;
 
 
 public class SimplexMethod {

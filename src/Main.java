@@ -1,8 +1,9 @@
-import LinearProgrammingProblem.Problem;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import LinearProgrammingProblem.Problem;
+import Methods.SimplexMethod;
 
 public class Main {
 

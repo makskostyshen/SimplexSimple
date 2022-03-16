@@ -1,8 +1,11 @@
-import LinearProgrammingProblem.Constraint;
-import LinearProgrammingProblem.Problem;
+package CalculatingTable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import LinearProgrammingProblem.Constraint;
+import LinearProgrammingProblem.Problem;
+
 
 public class Tableau {
     private List<Double> minFuncComponents;

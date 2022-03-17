@@ -1,8 +1,6 @@
 import java.util.*;
 
-import LinearProgrammingProblem.Constraint;
 import LinearProgrammingProblem.Problem;
-import LinearProgrammingProblem.Sign;
 import Methods.SimplexMethod;
 
 public class Main {
@@ -16,13 +14,12 @@ public class Main {
         String s3 = "2 1 1 LESS 10";
         String s4 = "2 2 1 LESS 16";
 
-        List<String> stringy = new ArrayList<>(Arrays.asList(s0, s1, s2, s3, s4));
-        Problem problem = new Problem(stringy);
+        List<String> data = new ArrayList<>(Arrays.asList(s0, s1, s2, s3, s4));
+        Problem problem = Problem.createProblem(data);
 
         System.out.println(problem);
         SimplexMethod sm = new SimplexMethod();
         System.out.println(sm.solve(problem));
-
 
     }
 }

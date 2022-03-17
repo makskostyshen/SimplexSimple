@@ -11,21 +11,24 @@ public class Constraint {
     private Sign sign;
     private double RHS;
 
+    private static final Sign[] constraintSigns = new Sign[]{Sign.MORE, Sign.LESS, Sign.EQUAL};
+
 
     private Constraint(){
-        varComponents = new ArrayList<Double>();
-        slackVarComponents = new ArrayList<Double>();
-        surplusVarComponents = new ArrayList<Double>();
+        varComponents = new ArrayList<>();
+        slackVarComponents = new ArrayList<>();
+        surplusVarComponents = new ArrayList<>();
     }
 
-    public Constraint(List<String> constraintString){
-        this();
+    public Constraint(List<String> constraintString)
+            throws IllegalArgumentException{
 
+        this();
         int i;
         for(i = 0; i < constraintString.size()-2; i++){
             varComponents.add(Double.valueOf(constraintString.get(i)));
         }
-        sign = Sign.valueOf(constraintString.get(i));
+        sign = Sign.getProperSign(constraintString.get(i), constraintSigns);
         RHS = Double.valueOf(constraintString.get(i+1));
     }
 
@@ -104,7 +107,7 @@ public class Constraint {
         if(!slackVarComponents.isEmpty()){builder.append(slackVarComponents + " ");}
         if(!surplusVarComponents.isEmpty()){builder.append(surplusVarComponents+ " ");}
 
-        return varComponents + " " + builder.toString() + sign + " " + RHS;
+        return varComponents + " " + builder + sign + " " + RHS;
     }
 }
 

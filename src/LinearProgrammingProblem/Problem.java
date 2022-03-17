@@ -13,28 +13,49 @@ public class Problem
     private int surplusVarsNum;
     private int consNum;
 
+    private static final Sign[] variableSigns = new Sign[]{Sign.MORE, Sign.LESS, Sign.NON};
 
-    public Problem (List<String> data){
+    public static Problem createProblem(List<String> data){
+        try{
+            return new Problem(data);
+        }
+        catch(Exception e){
+            System.out.println(e);
+            e.printStackTrace(System.out);
+            return new Problem();
+        }
+
+    }
+
+    private Problem(){}
+
+    private Problem (List<String> data)
+            throws IllegalArgumentException{
         Iterator<String> iterator = data.iterator();
 
         minFuncComponents = createMinFuncComponents(iterator.next());
         signs = createSigns(iterator.next());
         constraints = createConstraints(iterator);
-        varsNum = signs.size();
+        varsNum = getProperVarsNum();
         consNum = constraints.size();
     }
 
-    private static List<Sign> createSigns(String signsString){
+    private static List<Sign> createSigns(String signsString)
+            throws IllegalArgumentException{
+
         List<Sign> signs = new ArrayList<>();
         List<String> signsListString =
                 getElementsSplit(signsString);
+
         for(String elementString: signsListString){
-            signs.add(Sign.valueOf(elementString));
+            signs.add(Sign.getProperSign(elementString, variableSigns));
         }
         return signs;
     }
 
-    private static List<Constraint> createConstraints(Iterator<String> iterator){
+    private static List<Constraint> createConstraints(Iterator<String> iterator)
+            throws IllegalArgumentException{
+
         List<Constraint> constraints = new ArrayList<>();
         while(iterator.hasNext()){
             constraints.add(new Constraint(getElementsSplit(iterator.next())));
@@ -42,7 +63,9 @@ public class Problem
         return constraints;
     }
 
-    private static List<Double> createMinFuncComponents(String minFuncComponentsString){
+    private static List<Double> createMinFuncComponents(String minFuncComponentsString)
+            throws NumberFormatException{
+
         List<Double> minFuncComponents = new ArrayList<>();
         List<String> minFuncComponentsListString =
                 getElementsSplit(minFuncComponentsString);
@@ -53,6 +76,22 @@ public class Problem
         return minFuncComponents;
     }
 
+    private int getProperVarsNum()
+            throws InappropriateNumberOfVarsException{
+
+        Set<Integer> varsSizes = new HashSet<>();
+
+        varsSizes.add(signs.size());
+        varsSizes.add(minFuncComponents.size());
+        for(Constraint constraint: constraints){
+            varsSizes.add(constraint.getVarComponents().size());
+        }
+
+        if(varsSizes.size() != 1) throw new InappropriateNumberOfVarsException();
+        return varsSizes.iterator().next();
+    }
+
+
     public boolean isSlackForm(){
         return areConstraintsRHSsPositive() && areVarsPositive() && areConstraintsOnlySpecificSign(Sign.LESS);
     }
@@ -61,7 +100,6 @@ public class Problem
         varsTransform();
         constraintsTransform();
     }
-
 
 
     private void varsTransform(){
@@ -76,7 +114,7 @@ public class Problem
     }
     private void constraintsTransform(){
         for(int j = 0; j < consNum; j++){
-            constraints.get(j).makeRHSPositive();
+            get(j).makeRHSPositive();
             constraintMakeEquation(j);
         }
     }
@@ -85,7 +123,7 @@ public class Problem
     private void varSplitIntoPositive(int varsIndex){
         for (int j = 0; j < consNum; j++){
             double newComponent =  -get(j).getVarComponents().get(varsIndex);
-            constraints.get(j).getVarComponents().add(varsIndex+1, newComponent);
+            get(j).getVarComponents().add(varsIndex+1, newComponent);
         }
 
         minFuncComponents.add(varsIndex, -minFuncComponents.get(varsIndex));
@@ -105,10 +143,10 @@ public class Problem
     private void addSlackVar(int consIndex){
         for(int i = 0; i < consNum; i++){
             if(i == consIndex){
-                constraints.get(i).addSlackComponent();
-                constraints.get(i).setSign(Sign.EQUAL);
+                get(i).addSlackComponent();
+                get(i).setSign(Sign.EQUAL);
             }
-            else constraints.get(i).addSlackEmpty();
+            else get(i).addSlackEmpty();
         }
         minFuncComponents.add(0.);
         signs.add(Sign.MORE);
@@ -117,10 +155,10 @@ public class Problem
     private void addSurplusVar(int consIndex){
         for(int i = 0; i < consNum; i++){
             if(i == consIndex){
-                constraints.get(i).addSurplusComponent();
-                constraints.get(i).setSign(Sign.EQUAL);
+                get(i).addSurplusComponent();
+                get(i).setSign(Sign.EQUAL);
             }
-            else constraints.get(i).addSurplusEmpty();
+            else get(i).addSurplusEmpty();
         }
         minFuncComponents.add(0.);
         signs.add(Sign.MORE);
@@ -128,10 +166,10 @@ public class Problem
     }
 
     private void constraintMakeEquation(int consIndex){
-        if(constraints.get(consIndex).getSign() == Sign.LESS){
+        if(get(consIndex).getSign() == Sign.LESS){
             addSlackVar(consIndex);
         }
-        else if(constraints.get(consIndex).getSign() == Sign.MORE){
+        else if(get(consIndex).getSign() == Sign.MORE){
             addSurplusVar(consIndex);
         }
     }
@@ -215,6 +253,9 @@ public class Problem
 
     @Override
     public String toString(){
+        if(this.constraints == null){
+            return "...empty table...";
+        }
         StringBuilder builder = new StringBuilder();
         builder.append(minFuncComponents.toString());
         builder.append("\n"+ signs.toString());
@@ -226,3 +267,5 @@ public class Problem
     }
 
 }
+
+class InappropriateNumberOfVarsException extends IllegalArgumentException{}

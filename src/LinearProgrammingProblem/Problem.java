@@ -1,8 +1,6 @@
 package LinearProgrammingProblem;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 
 public class Problem
@@ -27,7 +25,7 @@ public class Problem
     }
 
     private static List<Sign> createSigns(String signsString){
-        List<Sign> signs = new ArrayList<Sign>();
+        List<Sign> signs = new ArrayList<>();
         List<String> signsListString =
                 getElementsSplit(signsString);
         for(String elementString: signsListString){
@@ -37,7 +35,7 @@ public class Problem
     }
 
     private static List<Constraint> createConstraints(Iterator<String> iterator){
-        List<Constraint> constraints = new ArrayList<Constraint>();
+        List<Constraint> constraints = new ArrayList<>();
         while(iterator.hasNext()){
             constraints.add(new Constraint(getElementsSplit(iterator.next())));
         }
@@ -45,7 +43,7 @@ public class Problem
     }
 
     private static List<Double> createMinFuncComponents(String minFuncComponentsString){
-        List<Double> minFuncComponents = new ArrayList<Double>();
+        List<Double> minFuncComponents = new ArrayList<>();
         List<String> minFuncComponentsListString =
                 getElementsSplit(minFuncComponentsString);
 
@@ -200,7 +198,7 @@ public class Problem
     }
 
     private static List<String> getElementsSplit(String stringToSplit){
-        List<String> elementsSplit = new ArrayList<String>();
+        List<String> elementsSplit = new ArrayList<>();
         int prevIndex = 0;
         int currIndex;
 

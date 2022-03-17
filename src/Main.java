@@ -1,15 +1,16 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
+import LinearProgrammingProblem.Constraint;
 import LinearProgrammingProblem.Problem;
+import LinearProgrammingProblem.Sign;
 import Methods.SimplexMethod;
 
 public class Main {
 
+
     public static void main(String[] args) {
 
-        String s0 = "-20 -16 12";
+        String s0 = "-20 -16 -12";
         String s1 = "MORE MORE MORE";
         String s2 = "1 0 0 LESS 4";
         String s3 = "2 1 1 LESS 10";

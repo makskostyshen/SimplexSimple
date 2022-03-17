@@ -10,25 +10,38 @@ import LinearProgrammingProblem.Problem;
 public class SimplexMethod {
 
     public List<Double> solve(Problem problem){
-        if(!problem.isSlackForm()){
-            System.out.println("this part has not been completed yet");
-            return new ArrayList<>();
+        List<Double> resultComponents = new ArrayList<>();
+
+        try{
+            resultComponents = simplexMethodSolve(problem);
         }
+        catch (Exception e){
+            System.out.println(e);
+            e.printStackTrace(System.out);
+        }
+        finally{
+            return resultComponents;
+        }
+    }
+
+    private List<Double> simplexMethodSolve(Problem problem) throws SimplexMethodException{
+        if(!problem.isSlackForm()){throw new NoSuchSolutionIsDoneYet();}
+
         problem.toStandartForm();
         Tableau tableau = new Tableau(problem);
 
         while(isTargetNotAchieved(tableau)){
             nextIteration(tableau);
-            System.out.println(tableau + "\n");
         }
         return getResultsComponents(tableau);
     }
 
-    private void nextIteration(Tableau tableau){
+    private void nextIteration(Tableau tableau) throws NoFiniteOptimumException{
         int columnIndex = getColumnIndex(tableau);
         int rowIndex = getRowIndex(tableau, columnIndex);
         pivot(tableau, columnIndex, rowIndex);
         changeBasicIndexes(tableau, columnIndex, rowIndex);
+        System.out.println(tableau + "\n");
     }
 
     private boolean isTargetNotAchieved(Tableau tableau){
@@ -36,7 +49,7 @@ public class SimplexMethod {
     }
 
     private List<Double> getResultsComponents(Tableau tableau) {
-        List<Double> resultComponents = new ArrayList<Double>();
+        List<Double> resultComponents = new ArrayList<>();
 
         for(int i = 0; i < tableau.getCompNum(); i++){
             resultComponents.add(0.);
@@ -74,8 +87,11 @@ public class SimplexMethod {
         return minDiffIndex;
     }
 
-    private int getRowIndex(Tableau tableau, int columnIndex){
+    private int getRowIndex(Tableau tableau, int columnIndex) throws NoFiniteOptimumException{
         List<Integer> positiveCompIndexes = getPositiveCompIndexes(tableau, columnIndex);
+
+        if(positiveCompIndexes.size()==0) throw new NoFiniteOptimumException();
+
         int minDivIndex = positiveCompIndexes.get(0);
 
         for(int thisIndex: positiveCompIndexes){
@@ -121,3 +137,7 @@ public class SimplexMethod {
     }
 
 }
+
+class SimplexMethodException extends IllegalArgumentException{}
+class NoSuchSolutionIsDoneYet extends SimplexMethodException{}
+class NoFiniteOptimumException extends SimplexMethodException{}

@@ -67,7 +67,7 @@ public class Tableau {
         }
 
         return "minF: " + minFuncComponents + "\n" +
-                builder.toString() +
+                builder +
                 "sD: " + simplexDiffComponents;
     }
 }

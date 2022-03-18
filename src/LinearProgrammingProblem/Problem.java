@@ -16,15 +16,24 @@ public class Problem
     private static final Sign[] variableSigns = new Sign[]{Sign.MORE, Sign.LESS, Sign.NON};
 
     public static Problem createProblem(List<String> data){
+        Problem problem = new Problem();
         try{
-            return new Problem(data);
+            problem = new Problem(data);
+        }
+        catch (NumberFormatException nfe){
+            System.out.println("Error:\n" + nfe);
+        }
+        catch (SimplexProblemException spe){
+            System.out.println("Error:\n" + spe);
         }
         catch(Exception e){
-            System.out.println(e);
+            System.out.println("Error:\n" + e);
+            System.out.println("Not expected problem detected");
             e.printStackTrace(System.out);
-            return new Problem();
         }
-
+        finally {
+            return problem;
+        }
     }
 
     private Problem(){}
@@ -41,7 +50,7 @@ public class Problem
     }
 
     private static List<Sign> createSigns(String signsString)
-            throws IllegalArgumentException{
+            throws SignException{
 
         List<Sign> signs = new ArrayList<>();
         List<String> signsListString =
@@ -87,7 +96,12 @@ public class Problem
             varsSizes.add(constraint.getVarComponents().size());
         }
 
-        if(varsSizes.size() != 1) throw new InappropriateNumberOfVarsException();
+        if(varsSizes.size() != 1){
+            throw new InappropriateNumberOfVarsException(
+                    "Different rows have different" +
+                    "number of components:"+
+                    varsSizes);}
+
         return varsSizes.iterator().next();
     }
 
@@ -251,11 +265,14 @@ public class Problem
         return elementsSplit;
     }
 
+    public boolean isEmpty(){
+        return constraints == null;
+    }
+
     @Override
     public String toString(){
-        if(this.constraints == null){
-            return "...empty table...";
-        }
+        if(isEmpty()) {return "...empty table...";}
+
         StringBuilder builder = new StringBuilder();
         builder.append(minFuncComponents.toString());
         builder.append("\n"+ signs.toString());
@@ -268,4 +285,15 @@ public class Problem
 
 }
 
-class InappropriateNumberOfVarsException extends IllegalArgumentException{}
+class SimplexProblemException extends IllegalArgumentException{
+    SimplexProblemException(String msg){
+        super(msg);
+    }
+    SimplexProblemException(){}
+}
+class InappropriateNumberOfVarsException extends SimplexProblemException{
+    InappropriateNumberOfVarsException(String msg){
+        super(msg);
+    }
+    InappropriateNumberOfVarsException(){}
+}

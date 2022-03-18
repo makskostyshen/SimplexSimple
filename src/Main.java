@@ -17,7 +17,7 @@ public class Main {
         List<String> data = new ArrayList<>(Arrays.asList(s0, s1, s2, s3, s4));
         Problem problem = Problem.createProblem(data);
 
-        System.out.println(problem);
+        System.out.println(problem+"\n");
         SimplexMethod sm = new SimplexMethod();
         System.out.println(sm.solve(problem));
 

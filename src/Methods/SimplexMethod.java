@@ -15,8 +15,12 @@ public class SimplexMethod {
         try{
             resultComponents = simplexMethodSolve(problem);
         }
+        catch (SimplexMethodException sme){
+            System.out.println("Error:\n" + sme);
+        }
         catch (Exception e){
-            System.out.println(e);
+            System.out.println("Error:\n" + e);
+            System.out.println("Not expected problem detected");
             e.printStackTrace(System.out);
         }
         finally{
@@ -25,7 +29,14 @@ public class SimplexMethod {
     }
 
     private List<Double> simplexMethodSolve(Problem problem) throws SimplexMethodException{
+        if(problem.isEmpty()){throw new EmptyProblemException();}
         if(!problem.isSlackForm()){throw new NoSuchSolutionIsDoneYet();}
+
+        return slackFormSolve(problem);
+    }
+
+    private List<Double> slackFormSolve(Problem problem)
+            throws NoFiniteOptimumException{
 
         problem.toStandartForm();
         Tableau tableau = new Tableau(problem);
@@ -138,6 +149,27 @@ public class SimplexMethod {
 
 }
 
-class SimplexMethodException extends IllegalArgumentException{}
-class NoSuchSolutionIsDoneYet extends SimplexMethodException{}
-class NoFiniteOptimumException extends SimplexMethodException{}
+class SimplexMethodException extends IllegalArgumentException{
+    SimplexMethodException(String msg){
+        super(msg);
+    }
+    SimplexMethodException(){}
+}
+class NoSuchSolutionIsDoneYet extends SimplexMethodException{
+    NoSuchSolutionIsDoneYet(String msg){
+        super(msg);
+    }
+    NoSuchSolutionIsDoneYet(){}
+}
+class NoFiniteOptimumException extends SimplexMethodException{
+    NoFiniteOptimumException(String msg){
+        super(msg);
+    }
+    NoFiniteOptimumException(){}
+}
+class EmptyProblemException extends  SimplexMethodException{
+    EmptyProblemException(String msg){
+        super(msg);
+    }
+    EmptyProblemException(){}
+}

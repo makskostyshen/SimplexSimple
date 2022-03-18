@@ -27,11 +27,17 @@ public enum Sign {
     }
 
     public static Sign getProperSign(String signImpl, Sign... possibleSigns)
-            throws InappropriateSignException{
+            throws SignException{
+        Sign newSign;
+        try{
+            newSign = Sign.valueOf(signImpl);
+        }
+        catch(IllegalArgumentException iae){
+            throw new WrongSignException("Cannot convert \"" + signImpl + "\" to Sign");
+        }
 
-        Sign newSign = Sign.valueOf(signImpl);
         if(newSign.isNotProper(possibleSigns)){
-            throw new InappropriateSignException();
+            throw new InappropriateSignException("For sign \"" + newSign + "\"");
         }
         return newSign;
     }
@@ -43,4 +49,21 @@ public enum Sign {
 
 }
 
-class InappropriateSignException extends IllegalArgumentException{}
+class SignException extends SimplexProblemException{
+    SignException(String msg){
+        super(msg);
+    }
+    SignException(){}
+}
+class InappropriateSignException extends SignException{
+    InappropriateSignException(String msg){
+        super(msg);
+    }
+    InappropriateSignException(){}
+}
+class WrongSignException extends SignException{
+    WrongSignException(String msg){
+        super(msg);
+    }
+    WrongSignException(){}
+}

@@ -1,6 +1,7 @@
 package LinearProgrammingProblem;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Problem
@@ -40,7 +41,9 @@ public class Problem
 
     private Problem (List<String> data)
             throws IllegalArgumentException{
-        Iterator<String> iterator = data.iterator();
+
+        List<List<String>> separatedValues = getSeparatedValues(data);
+        Iterator<List<String>> iterator = separatedValues.iterator();
 
         minFuncComponents = createMinFuncComponents(iterator.next());
         signs = createSigns(iterator.next());
@@ -49,40 +52,37 @@ public class Problem
         consNum = constraints.size();
     }
 
-    private static List<Sign> createSigns(String signsString)
-            throws SignException{
-
-        List<Sign> signs = new ArrayList<>();
-        List<String> signsListString =
-                getElementsSplit(signsString);
-
-        for(String elementString: signsListString){
-            signs.add(Sign.getProperSign(elementString, variableSigns));
-        }
-        return signs;
+    private static List<List<String>> getSeparatedValues(List<String> data){
+        return data.stream()
+                .map(str -> str.split("\\s+"))
+                .map(array -> Arrays.asList(array))
+                .toList();
     }
 
-    private static List<Constraint> createConstraints(Iterator<String> iterator)
+    private static List<Double> createMinFuncComponents(List<String> minFuncComponentsString)
+            throws NumberFormatException{
+
+        return minFuncComponentsString.stream()
+                .map(str -> Double.valueOf(str))
+                .collect(Collectors.toList());
+    }
+
+    private static List<Sign> createSigns(List<String> signsString)
+            throws SignException{
+
+        return signsString.stream()
+                .map(signString -> Sign.getProperSign(signString, variableSigns))
+                .collect(Collectors.toList());
+    }
+
+    private static List<Constraint> createConstraints(Iterator<List<String>> iterator)
             throws IllegalArgumentException{
 
         List<Constraint> constraints = new ArrayList<>();
         while(iterator.hasNext()){
-            constraints.add(new Constraint(getElementsSplit(iterator.next())));
+            constraints.add(new Constraint(iterator.next()));
         }
         return constraints;
-    }
-
-    private static List<Double> createMinFuncComponents(String minFuncComponentsString)
-            throws NumberFormatException{
-
-        List<Double> minFuncComponents = new ArrayList<>();
-        List<String> minFuncComponentsListString =
-                getElementsSplit(minFuncComponentsString);
-
-        for(String elementString: minFuncComponentsListString){
-            minFuncComponents.add(Double.valueOf(elementString));
-        }
-        return minFuncComponents;
     }
 
     private int getProperVarsNum()
@@ -190,34 +190,16 @@ public class Problem
 
 
     private boolean areVarsPositive(){
-        boolean state = true;
-        for(Sign sign: signs){
-            if (sign != Sign.MORE){
-                state = false;
-               break;
-            }
-        }
-        return state;
+        return signs.stream()
+                .allMatch(sign -> sign == Sign.MORE);
     }
     private boolean areConstraintsRHSsPositive(){
-        boolean state = true;
-        for(Constraint constraint: constraints){
-            if (constraint.getRHS() < 0){
-                state = false;
-                break;
-            }
-        }
-        return state;
+        return constraints.stream()
+                .allMatch(constraint -> constraint.getRHS() > 0);
     }
     private boolean areConstraintsOnlySpecificSign(Sign sign){
-        boolean state = true;
-        for(Constraint constraint: constraints){
-            if (constraint.getSign() != sign){
-                state = false;
-                break;
-            }
-        }
-        return state;
+        return constraints.stream()
+                .allMatch(constraint -> constraint.getSign() == sign);
     }
 
 
@@ -249,22 +231,6 @@ public class Problem
         return constraints.get(consIndex);
     }
 
-    private static List<String> getElementsSplit(String stringToSplit){
-        List<String> elementsSplit = new ArrayList<>();
-        int prevIndex = 0;
-        int currIndex;
-
-        for(currIndex = 0; currIndex < stringToSplit.length(); currIndex++){
-            if(stringToSplit.charAt(currIndex) == ' '){
-                String  newElement = stringToSplit.substring(prevIndex, currIndex);
-                elementsSplit.add(newElement);
-                prevIndex = currIndex+1;
-            }
-        }
-        elementsSplit.add(stringToSplit.substring(prevIndex, currIndex));
-        return elementsSplit;
-    }
-
     public boolean isEmpty(){
         return constraints == null;
     }
@@ -282,7 +248,6 @@ public class Problem
         }
         return builder.toString();
     }
-
 }
 
 class SimplexProblemException extends IllegalArgumentException{

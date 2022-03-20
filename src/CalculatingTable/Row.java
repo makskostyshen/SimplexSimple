@@ -2,6 +2,7 @@ package CalculatingTable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import LinearProgrammingProblem.Constraint;
 
@@ -28,18 +29,23 @@ public class Row {
 
     public void pivot(int index){
         double divider = get(index);
-        for(int i = 0; i < components.size(); i++){
-            set(i, get(i)/divider);
-        }
         RHS/=divider;
+
+        components = components.stream()
+                .map(value -> value/divider)
+                .collect(Collectors.toList());
     }
 
     public void elementaryRowReduce(Row other, int index){
-        double multiplier = get(index)/other.get(index);
+        double multiplier = -get(index)/other.get(index);
+        linearAdd(other, 1., multiplier);
+    }
+
+    public void linearAdd(Row other, double multiplierThis, double multiplierOther){
+        RHS = RHS * multiplierThis + other.RHS * multiplierOther;
         for(int i = 0; i < components.size(); i++){
-            set(i, get(i) - other.get(i) * multiplier);
+            set(i, multiplierThis * get(i) + multiplierOther * other.get(i));
         }
-        RHS -= other.RHS*multiplier;
     }
 
     public List<Double> getComponents() {

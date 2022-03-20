@@ -1,7 +1,9 @@
 package Methods;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import CalculatingTable.Tableau;
 import LinearProgrammingProblem.Problem;
@@ -40,6 +42,7 @@ public class SimplexMethod {
 
         problem.toStandartForm();
         Tableau tableau = new Tableau(problem);
+        System.out.println(tableau + "\n");
 
         while(isTargetNotAchieved(tableau)){
             nextIteration(tableau);
@@ -56,15 +59,15 @@ public class SimplexMethod {
     }
 
     private boolean isTargetNotAchieved(Tableau tableau){
-        return tableau.getSimplexDiffComponents().getComponents().stream().min(Double::compareTo).orElse(0.0) < 0;
+        return tableau.getSimplexDiffComponents()
+                .getComponents().stream()
+                .min(Double::compareTo)
+                .orElse(0.0) < 0;
     }
 
     private List<Double> getResultsComponents(Tableau tableau) {
-        List<Double> resultComponents = new ArrayList<>();
-
-        for(int i = 0; i < tableau.getCompNum(); i++){
-            resultComponents.add(0.);
-        }
+        List<Double> resultComponents =
+                new ArrayList<>(Collections.nCopies(tableau.getCompNum(), 0.));
 
         for (int j = 0; j < tableau.getRowNum(); j++){
             int basicIndex = tableau.get(j).getBasicIndex();

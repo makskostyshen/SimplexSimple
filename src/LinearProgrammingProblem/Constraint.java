@@ -2,6 +2,7 @@ package LinearProgrammingProblem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Constraint {
     private List<Double> varComponents;
@@ -30,6 +31,7 @@ public class Constraint {
         }
         sign = Sign.getProperSign(constraintString.get(i), constraintSigns);
         RHS = Double.valueOf(constraintString.get(i+1));
+
     }
 
 
@@ -53,15 +55,18 @@ public class Constraint {
         if(RHS < 0){
             RHS=-RHS;
             sign = Sign.getOpposite(sign);
-            for(int i = 0; i < varComponents.size(); i++){
-                varComponents.set(i, -varComponents.get(i));
-            }
-            for(int i = 0; i < slackVarComponents.size(); i++){
-                slackVarComponents.set(i, -slackVarComponents.get(i));
-            }
-            for(int i = 0; i < surplusVarComponents.size(); i++){
-                surplusVarComponents.set(i, -surplusVarComponents.get(i));
-            }
+
+            varComponents = varComponents.stream()
+                    .map(value -> -value)
+                    .collect(Collectors.toList());
+
+            slackVarComponents = slackVarComponents.stream()
+                    .map(value -> -value)
+                    .collect(Collectors.toList());
+
+            surplusVarComponents = surplusVarComponents.stream()
+                    .map(value -> -value)
+                    .collect(Collectors.toList());
         }
     }
 

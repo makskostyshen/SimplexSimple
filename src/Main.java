@@ -18,6 +18,12 @@ public class Main {
 
         List<String> data0 = new ArrayList<>(Arrays.asList(s00, s01, s02, s03, s04));
         Problem problem0 = Problem.createProblem(data0);
+
+//        System.out.println(problem0);
+//        problem0.toStandartForm();
+//        System.out.println(problem0);
+//        System.out.println(problem0.hasSlackIdentityMatrix());
+
         System.out.println(problem0+"\n");
         SimplexMethod sm0 = new SimplexMethod();
         System.out.println(sm0.solve(problem0)+"\n");
@@ -29,19 +35,19 @@ public class Main {
         String s13 = "-3 2 LESS 9";
         String s14 = "3 4 LESS 27";
 
-        List<String> data1 = new ArrayList<>(Arrays.asList(s10, s11, s12, s13, s14));
-        Problem problem1 = Problem.createProblem(data1);
-        System.out.println(problem1+"\n");
-        SimplexMethod sm1 = new SimplexMethod();
-        System.out.println(sm1.solve(problem1)+"\n");
+//        List<String> data1 = new ArrayList<>(Arrays.asList(s10, s11, s12, s13, s14));
+//        Problem problem1 = Problem.createProblem(data1);
+//        System.out.println(problem1+"\n");
+//        SimplexMethod sm1 = new SimplexMethod();
+//        System.out.println(sm1.solve(problem1)+"\n");
 
 
-//        String s20 = "-16 -12 -20";
-//        String s21 = "MORE MORE MORE";
-//        String s22 = "0 0 -1 LESS 4";
-//        String s23 = "1 1 0 LESS 2";
-//        String s24 = "2 1 -2 LESS 8";
-//
+        String s20 = "-16 -12 -20";
+        String s21 = "MORE MORE MORE";
+        String s22 = "0 0 -1 LESS 4";
+        String s23 = "1 1 0 LESS 2";
+        String s24 = "2 1 -2 LESS 8";
+
 //        List<String> data2 = new ArrayList<>(Arrays.asList(s20, s21, s22, s23, s24));
 //        Problem problem2 = Problem.createProblem(data2);
 //        System.out.println(problem2+"\n");

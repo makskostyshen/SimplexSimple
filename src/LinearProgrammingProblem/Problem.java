@@ -106,10 +106,9 @@ public class Problem
     }
 
 
-    public boolean isSlackForm(){
-        return areConstraintsRHSsPositive() && areVarsPositive() && areConstraintsOnlySpecificSign(Sign.LESS);
+    public boolean hasSlackIdentityMatrix(){
+        return slackVarsNum == consNum;
     }
-
     public void toStandartForm(){
         varsTransform();
         constraintsTransform();
@@ -186,20 +185,6 @@ public class Problem
         else if(get(consIndex).getSign() == Sign.MORE){
             addSurplusVar(consIndex);
         }
-    }
-
-
-    private boolean areVarsPositive(){
-        return signs.stream()
-                .allMatch(sign -> sign == Sign.MORE);
-    }
-    private boolean areConstraintsRHSsPositive(){
-        return constraints.stream()
-                .allMatch(constraint -> constraint.getRHS() > 0);
-    }
-    private boolean areConstraintsOnlySpecificSign(Sign sign){
-        return constraints.stream()
-                .allMatch(constraint -> constraint.getSign() == sign);
     }
 
 

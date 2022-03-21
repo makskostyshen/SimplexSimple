@@ -7,15 +7,16 @@ import java.util.stream.Collectors;
 
 import CalculatingTable.Tableau;
 import LinearProgrammingProblem.Problem;
-
+import LinearProgrammingProblem.ProblemResult;
 
 public class SimplexMethod {
 
-    public List<Double> solve(Problem problem){
-        List<Double> resultComponents = new ArrayList<>();
+    public ProblemResult solve(Problem problem){
+        ProblemResult result = new ProblemResult();
 
         try{
-            resultComponents = simplexMethodSolve(problem);
+            turnAndCheckAppropriateForm(problem);
+            result = simplexMethodSolve(problem);
         }
         catch (SimplexMethodException sme){
             System.out.println("Error:\n" + sme);
@@ -26,28 +27,37 @@ public class SimplexMethod {
             e.printStackTrace(System.out);
         }
         finally{
-            return resultComponents;
+            return result;
         }
     }
 
-    private List<Double> simplexMethodSolve(Problem problem) throws SimplexMethodException{
-        if(problem.isEmpty()){throw new EmptyProblemException();}
-        if(!problem.isSlackForm()){throw new NoSuchSolutionIsDoneYet();}
-
-        return slackFormSolve(problem);
-    }
-
-    private List<Double> slackFormSolve(Problem problem)
-            throws NoFiniteOptimumException{
+    private void turnAndCheckAppropriateForm(Problem problem)
+            throws SimplexMethodException{
 
         problem.toStandartForm();
+        if(problem.isEmpty()){throw new EmptyProblemException();}
+        if(!problem.hasSlackIdentityMatrix()){throw new NoSuchSolutionIsDoneYet();}
+    }
+
+    private ProblemResult simplexMethodSolve(Problem problem)
+            throws NoFiniteOptimumException{
+
         Tableau tableau = new Tableau(problem);
         System.out.println(tableau + "\n");
 
         while(isTargetNotAchieved(tableau)){
             nextIteration(tableau);
         }
-        return getResultsComponents(tableau);
+        return getResult(problem, tableau);
+    }
+
+    private ProblemResult getResult(Problem problem, Tableau tableau){
+        int limit = problem.getVarsNum();
+        List<Double> minFuncComponents = problem.getMinFuncComponents().subList(0, limit);
+        List<Double> resultComponentsFull = getResultsComponents(tableau).subList(0, limit);
+        double minValue = -tableau.getSimplexDiffComponents().getRHS();
+
+        return new ProblemResult(minFuncComponents, resultComponentsFull, minValue);
     }
 
     private void nextIteration(Tableau tableau) throws NoFiniteOptimumException{
@@ -149,7 +159,6 @@ public class SimplexMethod {
     private void changeBasicIndexes(Tableau tableau, int columnIndex, int rowIndex){
         tableau.get(rowIndex).setBasicIndex(columnIndex);
     }
-
 }
 
 class SimplexMethodException extends IllegalArgumentException{

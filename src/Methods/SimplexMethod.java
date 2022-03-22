@@ -43,7 +43,7 @@ public class SimplexMethod {
             throws NoFiniteOptimumException{
 
         Tableau tableau = new Tableau(problem);
-        System.out.println(tableau + "\n");
+        //System.out.println(tableau + "\n");
 
         while(isTargetNotAchieved(tableau)){
             nextIteration(tableau);
@@ -65,7 +65,7 @@ public class SimplexMethod {
         int rowIndex = getRowIndex(tableau, columnIndex);
         pivot(tableau, columnIndex, rowIndex);
         changeBasicIndexes(tableau, columnIndex, rowIndex);
-        System.out.println(tableau + "\n");
+        //System.out.println(tableau + "\n");
     }
 
     private boolean isTargetNotAchieved(Tableau tableau){
